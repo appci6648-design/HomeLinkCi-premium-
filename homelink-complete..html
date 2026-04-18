@@ -1,0 +1,1612 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#007aff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="HomeLink">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23007aff' width='192' height='192'/><text x='50%' y='50%' font-size='120' font-weight='bold' fill='white' text-anchor='middle' dominant-baseline='central'>H</text></svg>">
+    <title>HomeLink Premium 🇨🇮</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --ios-blue: #007aff;
+            --ios-green: #34c759;
+            --ios-red: #ff3b30;
+            --wave-blue: #1cb0f6;
+            --ios-bg: #f2f2f7;
+            --glass: rgba(255, 255, 255, 0.75);
+            --card-shadow: 0 8px 24px rgba(0,0,0,0.06);
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+            background-color: var(--ios-bg);
+            color: #000;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+            font-size: 18px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            position: sticky; top: 0; z-index: 1000;
+            background: rgba(242, 242, 247, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 45px 20px 15px;
+            border-bottom: 0.5px solid rgba(0,0,0,0.1);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        header h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; margin: 0; }
+
+        /* --- AUTH SCREEN --- */
+        #auth-screen {
+            position: fixed; inset: 0; background: #fff; z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 40px; text-align: center;
+        }
+
+        .logo-box {
+            width: 85px; height: 85px; background: linear-gradient(135deg, var(--ios-blue), #5856d6);
+            border-radius: 22px; margin-bottom: 25px; display: flex;
+            align-items: center; justify-content: center; color: white;
+            font-size: 45px; font-weight: 800; box-shadow: 0 10px 30px rgba(0,122,255,0.3);
+        }
+
+        .btn-google {
+            background: #000; color: white; border: none; width: 100%;
+            padding: 18px; border-radius: 18px; font-weight: 600; font-size: 18px;
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .btn-google:hover {
+            background: #333;
+        }
+
+        .btn-google:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* --- ONBOARDING --- */
+        #onboarding {
+            position:fixed; inset:0; background:#fff; z-index:5000; padding:80px 25px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+
+        /* --- ANTI-SCAM ALERT --- */
+        .scam-banner {
+            background: rgba(255, 59, 48, 0.1);
+            color: var(--ios-red); padding: 12px 20px;
+            font-size: 14px; font-weight: 500; line-height: 1.4;
+        }
+
+        /* --- CARDS --- */
+        .card {
+            background: white; margin: 15px; padding: 20px;
+            border-radius: 24px; box-shadow: var(--card-shadow);
+            transition: transform 0.2s ease; position: relative;
+            cursor: pointer;
+        }
+        .card:active { transform: scale(0.97); }
+
+        .verified-badge {
+            background: rgba(52, 199, 89, 0.1); color: var(--ios-green);
+            padding: 4px 10px; border-radius: 20px; font-size: 13px; font-weight: 700;
+            display: inline-block; margin-bottom: 8px;
+        }
+
+        /* --- FLOATING TAB BAR --- */
+        .tab-bar-container {
+            position: fixed; bottom: 30px; left: 50%;
+            transform: translateX(-50%); width: 92%; max-width: 420px; z-index: 1000;
+        }
+
+        .tab-bar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex;
+            padding: 8px;
+            border-radius: 35px;
+            border: 0.5px solid rgba(0,0,0,0.08);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+            position: relative;
+            gap: 4px;
+        }
+
+        .tab-item {
+            flex: 1;
+            text-align: center;
+            color: #8e8e93;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 12px 0;
+            position: relative;
+            z-index: 2;
+            transition: color 0.3s ease;
+            cursor: pointer;
+            border-radius: 28px;
+        }
+
+        .tab-item.active { color: var(--ios-blue); }
+
+        .tab-indicator {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            height: calc(100% - 16px);
+            width: calc(25% - 3px);
+            background: rgba(0, 122, 255, 0.1);
+            border-radius: 24px;
+            z-index: 1;
+            transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.2);
+            pointer-events: none;
+        }
+
+        /* --- ADMIN PANEL STYLES --- */
+        .admin-tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 18px;
+            padding: 8px;
+            box-shadow: var(--card-shadow);
+            border: 0.5px solid rgba(0,0,0,0.08);
+        }
+
+        .admin-tab-btn {
+            flex: 1;
+            padding: 10px 15px;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            font-weight: 600;
+            color: #8e8e93;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .admin-tab-btn.active {
+            background: var(--ios-blue);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.2);
+        }
+
+        .admin-section {
+            margin-bottom: 20px;
+        }
+
+        .payment-item, .listing-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 0.5px solid #eee;
+        }
+
+        .payment-item:last-child, .listing-item:last-child {
+            border-bottom: none;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .btn-green {
+            background: var(--ios-green);
+        }
+
+        .btn-red {
+            background: var(--ios-red);
+        }
+
+        .btn-blue {
+            background: var(--ios-blue);
+        }
+
+        /* --- FORM STYLES --- */
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 16px;
+        }
+        .form-input, .form-input select, .form-input textarea {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            box-sizing: border-box;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            font-family: inherit;
+        }
+        .form-input:focus, .form-input select:focus, .form-input textarea:focus {
+            outline: none;
+            border-color: var(--ios-blue);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2);
+        }
+        textarea.form-input {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* --- HELPERS --- */
+        .hidden { display: none !important; }
+        .view-section { animation: fadeIn 0.4s ease-out; padding-bottom: 140px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        .btn-wave {
+            background: var(--wave-blue); color: white; border: none;
+            width: 100%; padding: 16px; border-radius: 16px; font-weight: 700;
+            margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 8px;
+            cursor: pointer; font-size: 16px;
+        }
+
+        input[type="file"] {
+            padding: 10px 0;
+        }
+
+        .listing-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .listing-card {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .listing-image {
+            width: 120px;
+            height: 120px;
+            background: #ddd;
+            border-radius: 12px;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .listing-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .listing-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .listing-title {
+            font-weight: 700;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+
+        .listing-location {
+            font-size: 14px;
+            color: #8e8e93;
+            margin-bottom: 8px;
+        }
+
+        .listing-price {
+            font-weight: 700;
+            color: var(--ios-blue);
+            font-size: 18px;
+        }
+
+        .listing-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .listing-actions button {
+            flex: 1;
+            padding: 8px;
+            border-radius: 8px;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-report {
+            background: rgba(255, 59, 48, 0.1);
+            color: var(--ios-red);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .filter-select {
+            flex: 1;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            font-size: 15px;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #ddd;
+            border-top-color: var(--ios-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #8e8e93;
+            font-size: 16px;
+        }
+
+        /* --- MESSAGING STYLES --- */
+        .messages-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 12px;
+        }
+
+        .message {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .message.sent {
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 10px 14px;
+            border-radius: 18px;
+            word-wrap: break-word;
+            font-size: 15px;
+        }
+
+        .message.received .message-bubble {
+            background: #e5e5ea;
+            color: #000;
+        }
+
+        .message.sent .message-bubble {
+            background: var(--ios-blue);
+            color: white;
+        }
+
+        .message-time {
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        .message-input-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            font-size: 15px;
+        }
+
+        .message-send-btn {
+            background: var(--ios-blue);
+            color: white;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .conversations-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .conversation-item {
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .conversation-item:hover {
+            background: #f9f9f9;
+        }
+
+        .conversation-item.unread {
+            background: rgba(0, 122, 255, 0.05);
+            border-left: 4px solid var(--ios-blue);
+        }
+
+        .conversation-name {
+            font-weight: 700;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+
+        .conversation-preview {
+            font-size: 14px;
+            color: #8e8e93;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .notification-badge {
+            display: inline-block;
+            background: var(--ios-red);
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .install-prompt {
+            background: var(--ios-blue);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .install-prompt button {
+            background: white;
+            color: var(--ios-blue);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="auth-screen">
+    <div class="logo-box">H</div>
+    <h1 style="font-size: 32px; letter-spacing: -1px; margin-bottom: 10px;">HomeLink</h1>
+    <p style="color: #8e8e93; margin-bottom: 50px; font-size: 19px;">L'immobilier sûr en Côte d'Ivoire</p>
+    <button class="btn-google" onclick="handleLogin()">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="18" style="filter: brightness(10);">
+        Se connecter avec Google
+    </button>
+</div>
+
+<div id="onboarding" class="hidden" style="position:fixed; inset:0; background:#fff; z-index:5000; padding:80px 25px;">
+    <h2 style="font-size: 28px; letter-spacing: -0.5px; text-align: center;">Bienvenue sur HomeLink</h2>
+    <p style="color: #8e8e93; margin-bottom: 30px; text-align: center; font-size: 18px;">Identifiez votre profil pour continuer :</p>
+    
+    <div class="card" onclick="setProfile('LOCATAIRE')" style="margin: 0 0 15px 0; border: 1.5px solid #eee;">
+        <h3 style="margin:0; font-size: 18px;">🏠 Je suis Locataire</h3>
+        <p style="color:#8e8e93; margin:5px 0 0; font-size:16px;">Je cherche une maison ou un studio.</p>
+    </div>
+
+    <div class="card" onclick="setProfile('PROPRIETAIRE')" style="margin: 0; border: 1.5px solid #eee;">
+        <h3 style="margin:0; font-size: 18px;">🔑 Je suis Propriétaire</h3>
+        <p style="color:#8e8e93; margin:5px 0 0; font-size:16px;">Je souhaite publier mes annonces.</p>
+    </div>
+</div>
+
+<div id="main-app" class="hidden">
+    <header>
+        <h1 id="nav-title">Explorer</h1>
+        <span id="role-badge" style="background:#e5e5ea; padding:6px 12px; border-radius:10px; font-size:12px; font-weight:700;">PRO</span>
+    </header>
+
+    <div id="install-prompt" class="hidden install-prompt">
+        <div>
+            <strong>📱 Installer l'app</strong>
+            <p style="margin: 5px 0 0; font-size: 14px;">Accédez à HomeLink depuis votre écran d'accueil</p>
+        </div>
+        <button onclick="installApp()">Installer</button>
+    </div>
+
+    <div class="scam-banner">
+        ⚠️ <b>ANTI-ARNAQUE :</b> Ne versez jamais d'argent avant la visite physique du logement.
+    </div>
+
+    <main id="app-content">
+        <!-- HOME VIEW -->
+        <section id="view-home" class="view-section">
+            <div style="padding: 0 15px;">
+                <input type="text" id="search-input" placeholder="🔍 Cocody, Angré, 2 pièces..." class="search-input" onkeyup="filterListings()">
+                
+                <div class="filter-row">
+                    <select id="commune-filter" class="filter-select" onchange="filterListings()">
+                        <option value="">Toutes communes</option>
+                        <option value="Abobo">Abobo</option>
+                        <option value="Adjamé">Adjamé</option>
+                        <option value="Anyama">Anyama</option>
+                        <option value="Attécoubé">Attécoubé</option>
+                        <option value="Bingerville">Bingerville</option>
+                        <option value="Cocody">Cocody</option>
+                        <option value="Koumassi">Koumassi</option>
+                        <option value="Marcory">Marcory</option>
+                        <option value="Port-Bouët">Port-Bouët</option>
+                        <option value="Songon">Songon</option>
+                        <option value="Treichville">Treichville</option>
+                        <option value="Yopougon">Yopougon</option>
+                        <option value="Bouaké">Bouaké</option>
+                        <option value="Daloa">Daloa</option>
+                        <option value="Korhogo">Korhogo</option>
+                        <option value="Man">Man</option>
+                        <option value="San-Pédro">San-Pédro</option>
+                        <option value="Yamoussoukro">Yamoussoukro</option>
+                    </select>
+
+                    <select id="type-filter" class="filter-select" onchange="filterListings()">
+                        <option value="">Tous types</option>
+                        <option value="Studio">Studio</option>
+                        <option value="Appartement">Appartement</option>
+                        <option value="Villa">Villa</option>
+                        <option value="Chambre">Chambre</option>
+                        <option value="Maison">Maison</option>
+                        <option value="Terrain">Terrain</option>
+                        <option value="Bureau">Bureau</option>
+                        <option value="Magasin">Magasin</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="listings-container" style="padding: 0 15px;">
+                <div class="empty-state">Chargement des annonces...</div>
+            </div>
+        </section>
+
+        <!-- PUBLISH VIEW -->
+        <section id="view-publish" class="hidden view-section">
+            <div class="card">
+                <h3 style="font-size: 20px;">Publier une annonce</h3>
+                <p style="color:#8e8e93; font-size:16px;">Remplissez le formulaire ci-dessous pour publier votre annonce.</p>
+
+                <form id="publish-form" style="margin-top: 20px;" onsubmit="handlePublishListing(event)">
+                    <div class="form-group">
+                        <label for="photos">Photos (max 5)</label>
+                        <input type="file" id="photos" accept="image/*" multiple class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="title">Titre de l'annonce *</label>
+                        <input type="text" id="title" placeholder="Ex: Studio moderne à Cocody" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="price">Prix (FCFA) *</label>
+                        <input type="number" id="price" placeholder="Ex: 150000" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="neighborhood">Quartier</label>
+                        <input type="text" id="neighborhood" placeholder="Ex: Deux Plateaux" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="commune">Commune *</label>
+                        <select id="commune" class="form-input" required>
+                            <option value="">Sélectionner une commune</option>
+                            <optgroup label="Abidjan">
+                                <option value="Abobo">Abobo</option>
+                                <option value="Adjamé">Adjamé</option>
+                                <option value="Anyama">Anyama</option>
+                                <option value="Attécoubé">Attécoubé</option>
+                                <option value="Bingerville">Bingerville</option>
+                                <option value="Cocody">Cocody</option>
+                                <option value="Koumassi">Koumassi</option>
+                                <option value="Marcory">Marcory</option>
+                                <option value="Port-Bouët">Port-Bouët</option>
+                                <option value="Songon">Songon</option>
+                                <option value="Treichville">Treichville</option>
+                                <option value="Yopougon">Yopougon</option>
+                            </optgroup>
+                            <optgroup label="Autres villes de Côte d'Ivoire">
+                                <option value="Bouaké">Bouaké</option>
+                                <option value="Daloa">Daloa</option>
+                                <option value="Korhogo">Korhogo</option>
+                                <option value="Man">Man</option>
+                                <option value="San-Pédro">San-Pédro</option>
+                                <option value="Yamoussoukro">Yamoussoukro</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="ad-type">Type d'annonce *</label>
+                        <select id="ad-type" class="form-input" required>
+                            <option value="">Sélectionner un type</option>
+                            <option value="Studio">Studio</option>
+                            <option value="Appartement">Appartement</option>
+                            <option value="Villa">Villa</option>
+                            <option value="Chambre">Chambre</option>
+                            <option value="Maison">Maison</option>
+                            <option value="Terrain">Terrain</option>
+                            <option value="Bureau">Bureau</option>
+                            <option value="Magasin">Magasin</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" placeholder="Décrivez votre bien en détail..." class="form-input"></textarea>
+                    </div>
+                    <button type="submit" class="btn-wave" style="margin-top: 20px;">Publier l'annonce</button>
+                </form>
+
+                <div id="subscription-section" class="hidden">
+                    <h3 style="margin-top: 30px; font-size: 18px;">Packs d'annonces</h3>
+                    <select id="pack-select" class="form-input" style="margin-bottom:15px;">
+                        <option value="0">Choisir un pack</option>
+                        <option value="5000">3 Annonces — 5.000F</option>
+                        <option value="14000">10 Annonces — 14.000F</option>
+                        <option value="17000">20 Annonces — 17.000F</option>
+                        <option value="26000">30 Annonces — 26.000F</option>
+                    </select>
+
+                    <div style="background:#f2f2f7; padding:15px; border-radius:14px; margin-bottom: 15px;">
+                        <p style="margin:0; font-size:14px; color:#555;">Paiement Wave au numéro :</p>
+                        <h2 style="margin:5px 0; color:var(--wave-blue); letter-spacing:1px; font-size: 20px;">07 19 21 97 10</h2>
+                    </div>
+
+                    <button class="btn-wave" onclick="payWave()">
+                        🌊 Payer avec Wave
+                    </button>
+                </div>
+                <div id="free-announcement-badge" class="verified-badge" style="margin-top: 20px; background: rgba(0, 122, 255, 0.1); color: var(--ios-blue); padding: 10px 15px; border-radius: 12px; width: 100%; text-align: center; font-size: 15px;">
+                    ✨ Votre première annonce est 100% gratuite !
+                </div>
+            </div>
+        </section>
+
+        <!-- MESSAGES VIEW -->
+        <section id="view-messages" class="hidden view-section">
+            <div class="card">
+                <h3 style="font-size: 20px; margin-bottom: 20px;">💬 Messages</h3>
+                <div id="conversations-list" class="conversations-list">
+                    <div class="empty-state">Aucune conversation</div>
+                </div>
+            </div>
+            
+            <div id="chat-detail" class="hidden card" style="margin-top: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 id="chat-title" style="font-size: 18px; margin: 0;"></h3>
+                    <button onclick="backToConversations()" style="background: none; border: none; font-size: 24px; cursor: pointer;">✕</button>
+                </div>
+                <div id="messages-display" class="messages-container"></div>
+                <div class="message-input-group">
+                    <input type="text" id="message-input" class="message-input" placeholder="Votre message..." onkeypress="handleMessageKeyPress(event)">
+                    <button class="message-send-btn" onclick="sendMessage()">📤</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROFILE VIEW -->
+        <section id="view-profile" class="hidden view-section">
+            <div class="card">
+                <h3 style="font-size: 20px;">Mon Profil</h3>
+                <p style="margin: 15px 0; color:#8e8e93; font-size: 16px;">
+                    <b>Email:</b> <span id="profile-email">-</span><br>
+                    <b>Rôle:</b> <span id="profile-role">-</span>
+                </p>
+                <button class="btn-wave" style="background: var(--ios-red); margin-top: 20px;" onclick="handleLogout()">
+                    🚪 Déconnexion
+                </button>
+
+                <div id="my-listings-section" class="hidden" style="margin-top: 30px;">
+                    <h3 style="font-size: 18px;">Mes Annonces</h3>
+                    <div id="my-listings-container"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ADMIN VIEW -->
+        <section id="view-admin" class="hidden view-section">
+            <div class="card" style="border: 2px solid var(--ios-red); margin-bottom: 20px;">
+                <h2 style="color:var(--ios-red); margin:0; font-size: 20px;">🔐 Panneau Admin</h2>
+            </div>
+
+            <div class="admin-tabs">
+                <button class="admin-tab-btn active" onclick="switchAdminTab('payments')">Paiements</button>
+                <button class="admin-tab-btn" onclick="switchAdminTab('reported')">Signalées</button>
+            </div>
+
+            <div id="admin-payments" class="admin-section">
+                <div id="payments-list"></div>
+            </div>
+
+            <div id="admin-reported" class="admin-section hidden">
+                <div id="reported-listings-list"></div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<!-- Floating Tab Bar -->
+<div class="tab-bar-container" id="tab-bar-container">
+    <div class="tab-bar">
+        <div class="tab-indicator"></div>
+        <div class="tab-item active" data-tab="home" onclick="switchTab(event, 'home')">🏠 Explorer</div>
+        <div class="tab-item" id="tab-publish" data-tab="publish" onclick="switchTab(event, 'publish')">➕ Publier</div>
+        <div class="tab-item" id="tab-messages" data-tab="messages" onclick="switchTab(event, 'messages')">💬 <span id="msg-badge" class="hidden notification-badge">0</span></div>
+        <div class="tab-item" data-tab="profile" onclick="switchTab(event, 'profile')">👤 Profil</div>
+        <div class="tab-item hidden" id="tab-admin" data-tab="admin" onclick="switchTab(event, 'admin')">⚙️ Admin</div>
+    </div>
+</div>
+
+<script type="module">
+    // Import Firebase modules
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, setPersistence, browserLocalPersistence, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    import { getFirestore, collection, getDocs, getDoc, doc, setDoc, addDoc, updateDoc, query, where, onSnapshot, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyAH3V8vjDKP8WavXnWe0g4k4Hgk8LfDPiE",
+        authDomain: "homelinkci.firebaseapp.com",
+        projectId: "homelinkci",
+        storageBucket: "homelinkci.firebasestorage.app",
+        messagingSenderId: "604515405290",
+        appId: "1:604515405290:web:ae515bf9fdcb2eee4f7693"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    // Set persistence
+    setPersistence(auth, browserLocalPersistence).catch(error => {
+        console.error("Erreur lors de la configuration de la persistance:", error);
+    });
+
+    // Constants
+    const ADMIN_EMAIL = "jordanesmith072@gmail.com";
+    const WAVE_NUM = "0719219710";
+
+    // Global variables
+    let currentUser = null;
+    let currentUserProfile = null;
+    let allListings = [];
+    let currentChatWith = null;
+    let deferredPrompt = null;
+    let unreadCounts = {};
+
+    // PWA Installation
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        document.getElementById('install-prompt').classList.remove('hidden');
+    });
+
+    window.installApp = async function() {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log(`Utilisateur a répondu: ${outcome}`);
+            deferredPrompt = null;
+            document.getElementById('install-prompt').classList.add('hidden');
+        }
+    };
+
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('data:application/javascript,' + encodeURIComponent(`
+            self.addEventListener('install', event => {
+                self.skipWaiting();
+            });
+            self.addEventListener('activate', event => {
+                event.waitUntil(clients.claim());
+            });
+            self.addEventListener('push', event => {
+                const data = event.data.json();
+                const options = {
+                    body: data.body,
+                    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect fill="%23007aff" width="192" height="192"/><text x="50%" y="50%" font-size="120" font-weight="bold" fill="white" text-anchor="middle" dominant-baseline="central">H</text></svg>',
+                    badge: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect fill="%23007aff" width="192" height="192"/></svg>',
+                    tag: data.tag || 'notification'
+                };
+                self.registration.showNotification(data.title, options);
+            });
+        `)).catch(err => console.log('Service Worker registration failed:', err));
+    }
+
+    // Expose functions to global scope
+    window.handleLogin = handleLogin;
+    window.setProfile = setProfile;
+    window.handleLogout = handleLogout;
+    window.loadListings = loadListings;
+    window.displayListings = displayListings;
+    window.filterListings = filterListings;
+    window.reportListing = reportListing;
+    window.handlePublishListing = handlePublishListing;
+    window.checkSubscriptionStatus = checkSubscriptionStatus;
+    window.payWave = payWave;
+    window.switchTab = switchTab;
+    window.updateIndicator = updateIndicator;
+    window.loadAdminData = loadAdminData;
+    window.loadPayments = loadPayments;
+    window.validatePayment = validatePayment;
+    window.rejectPayment = rejectPayment;
+    window.loadReportedListings = loadReportedListings;
+    window.removeListing = removeListing;
+    window.loadProfileData = loadProfileData;
+    window.deleteMyListing = deleteMyListing;
+    window.switchAdminTab = switchAdminTab;
+    window.loadConversations = loadConversations;
+    window.openConversation = openConversation;
+    window.backToConversations = backToConversations;
+    window.sendMessage = sendMessage;
+    window.handleMessageKeyPress = handleMessageKeyPress;
+
+    // Auth state listener
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            const email = user.email ? user.email.toLowerCase() : "";
+            currentUser = { email: email, uid: user.uid };
+            document.getElementById('auth-screen').classList.add('hidden');
+
+            if (currentUser.email === ADMIN_EMAIL) {
+                currentUserProfile = { role: 'ADMIN' };
+                document.getElementById('role-badge').innerText = "ADMIN";
+                document.getElementById('role-badge').style.color = "var(--ios-red)";
+                document.getElementById('tab-admin').classList.remove('hidden');
+                showApp();
+                loadAdminData();
+                listenForAdminNotifications();
+            } else {
+                try {
+                    const userDocRef = doc(db, 'users', user.uid);
+                    const userDocSnap = await getDoc(userDocRef);
+                    
+                    if (userDocSnap.exists()) {
+                        currentUserProfile = userDocSnap.data();
+                        document.getElementById('role-badge').innerText = currentUserProfile.role === 'LOCATAIRE' ? 'LOC' : 'PRO';
+                        if (currentUserProfile.role === 'PROPRIETAIRE') {
+                            document.getElementById('tab-publish').classList.remove('hidden');
+                        } else {
+                            document.getElementById('tab-publish').classList.add('hidden');
+                        }
+                        showApp();
+                        loadListings();
+                        loadConversations();
+                    } else {
+                        document.getElementById('onboarding').classList.remove('hidden');
+                    }
+                } catch (error) {
+                    console.error('Erreur lors de la récupération du profil utilisateur:', error);
+                    document.getElementById('onboarding').classList.remove('hidden');
+                }
+            }
+        }
+    });
+
+    // Google Login
+    async function handleLogin() {
+        const loginBtn = event.target;
+        loginBtn.disabled = true;
+        loginBtn.innerText = "Connexion en cours...";
+
+        const provider = new GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: 'select_account' });
+
+        try {
+            const result = await signInWithPopup(auth, provider);
+            console.log("Utilisateur connecté:", result.user.email);
+        } catch (error) {
+            console.error("Erreur d'authentification Google:", error.code, error.message);
+
+            if (error.code === 'auth/popup-blocked' || error.code === 'auth/popup-closed-by-user') {
+                try {
+                    await signInWithRedirect(auth, provider);
+                } catch (redirectError) {
+                    console.error("Erreur lors de la redirection:", redirectError);
+                    alert("Erreur de connexion: " + redirectError.message);
+                }
+            } else if (error.code === 'auth/unauthorized-domain') {
+                alert("Erreur: Ce domaine n'est pas autorisé. Veuillez ajouter l'URL actuelle aux 'Domaines autorisés' dans la console Firebase.");
+            } else if (error.code !== 'auth/cancelled-popup-request') {
+                alert("Erreur de connexion: " + error.message);
+            }
+        } finally {
+            loginBtn.disabled = false;
+            loginBtn.innerHTML = '<img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="18" style="filter: brightness(10);">Se connecter avec Google';
+        }
+    }
+
+    // Set user profile
+    function setProfile(role) {
+        currentUserProfile = { role: role };
+        document.getElementById('role-badge').innerText = role === 'LOCATAIRE' ? 'LOC' : 'PRO';
+        document.getElementById('onboarding').classList.add('hidden');
+        if (role === 'LOCATAIRE') {
+            document.getElementById('tab-publish').classList.add('hidden');
+        } else {
+            document.getElementById('tab-publish').classList.remove('hidden');
+        }
+
+        setDoc(doc(db, 'users', currentUser.uid), {
+            email: currentUser.email,
+            role: role,
+            createdAt: new Date()
+        });
+
+        showApp();
+        loadListings();
+        loadConversations();
+        setTimeout(() => updateIndicator(), 100);
+    }
+
+    // Show app
+    function showApp() {
+        document.getElementById('main-app').classList.remove('hidden');
+        updateIndicator();
+    }
+
+    // Logout
+    function handleLogout() {
+        signOut(auth).then(() => {
+            currentUser = null;
+            currentUserProfile = null;
+            location.reload();
+        }).catch(error => {
+            console.error("Erreur lors de la déconnexion:", error);
+        });
+    }
+
+    // Load listings
+    async function loadListings() {
+        try {
+            const listingsRef = collection(db, 'listings');
+            const snapshot = await getDocs(listingsRef);
+            allListings = [];
+            snapshot.forEach(doc => {
+                allListings.push({ id: doc.id, ...doc.data() });
+            });
+            displayListings(allListings);
+        } catch (error) {
+            console.error('Erreur lors du chargement des annonces:', error);
+        }
+    }
+
+    // Display listings
+    function displayListings(listings) {
+        const container = document.getElementById('listings-container');
+        if (listings.length === 0) {
+            container.innerHTML = '<div class="empty-state">Aucune annonce trouvée</div>';
+            return;
+        }
+
+        container.innerHTML = listings.map(listing => `
+            <div class="listing-card">
+                <div class="listing-image">
+                    ${listing.photos && listing.photos.length > 0 
+                        ? `<img src="${listing.photos[0]}" alt="${listing.title}">` 
+                        : '<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#ccc;">Pas d\'image</div>'}
+                </div>
+                <div class="listing-content">
+                    <div>
+                        ${listing.verified ? '<span class="verified-badge">✓ Vérifié par HomeLink</span>' : ''}
+                        <div class="listing-title">${listing.title}</div>
+                        <div class="listing-location">${listing.neighborhood}, ${listing.commune}</div>
+                    </div>
+                    <div>
+                        <div class="listing-price">${listing.price.toLocaleString()} FCFA</div>
+                        <button class="btn-report" onclick="reportListing('${listing.id}')">🚩 Signaler</button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Filter listings
+    function filterListings() {
+        const search = document.getElementById('search-input').value.toLowerCase();
+        const commune = document.getElementById('commune-filter').value;
+        const type = document.getElementById('type-filter').value;
+
+        const filtered = allListings.filter(listing => {
+            const matchSearch = listing.title.toLowerCase().includes(search) || 
+                              listing.neighborhood.toLowerCase().includes(search);
+            const matchCommune = !commune || listing.commune === commune;
+            const matchType = !type || listing.type === type;
+            return matchSearch && matchCommune && matchType;
+        });
+
+        displayListings(filtered);
+    }
+
+    // Report listing
+    async function reportListing(listingId) {
+        try {
+            const listingRef = doc(db, 'listings', listingId);
+            const listingDoc = await getDoc(listingRef);
+            const reportCount = (listingDoc.data().reportCount || 0) + 1;
+            await updateDoc(listingRef, { reportCount });
+            alert('Annonce signalée. Merci pour votre vigilance.');
+        } catch (error) {
+            console.error('Erreur lors du signalement:', error);
+        }
+    }
+
+    // Publish listing
+    async function handlePublishListing(event) {
+        event.preventDefault();
+
+        const title = document.getElementById('title').value;
+        const price = parseInt(document.getElementById('price').value);
+        const neighborhood = document.getElementById('neighborhood').value;
+        const commune = document.getElementById('commune').value;
+        const type = document.getElementById('ad-type').value;
+        const description = document.getElementById('description').value;
+        const photosInput = document.getElementById('photos');
+
+        if (!title || !price || !commune || !type) {
+            alert('Veuillez remplir tous les champs obligatoires');
+            return;
+        }
+
+        try {
+            const listingsQuery = query(collection(db, 'listings'), where('userId', '==', currentUser.uid));
+            const listingsSnapshot = await getDocs(listingsQuery);
+            const listingCount = listingsSnapshot.size;
+
+            if (listingCount > 0) {
+                const paymentsQuery = query(collection(db, 'payments'), where('userId', '==', currentUser.uid), where('status', '==', 'validated'));
+                const paymentsSnapshot = await getDocs(paymentsQuery);
+                
+                if (paymentsSnapshot.empty) {
+                    alert('Votre première annonce gratuite a déjà été publiée. Veuillez choisir un pack d\'abonnement et attendre sa validation pour publier à nouveau.');
+                    document.getElementById('subscription-section').classList.remove('hidden');
+                    document.getElementById('free-announcement-badge').classList.add('hidden');
+                    return;
+                }
+            }
+
+            const photoUrls = [];
+            if (photosInput.files.length > 0) {
+                for (let i = 0; i < Math.min(photosInput.files.length, 5); i++) {
+                    const file = photosInput.files[i];
+                    const storageRef = ref(storage, `listings/${Date.now()}_${file.name}`);
+                    await uploadBytes(storageRef, file);
+                    const url = await getDownloadURL(storageRef);
+                    photoUrls.push(url);
+                }
+            }
+
+            await addDoc(collection(db, 'listings'), {
+                userId: currentUser.uid,
+                userEmail: currentUser.email,
+                title,
+                description,
+                price,
+                neighborhood,
+                commune,
+                type,
+                photos: photoUrls,
+                verified: false,
+                reportCount: 0,
+                createdAt: new Date(),
+                updatedAt: new Date()
+            });
+
+            alert('Annonce publiée avec succès !');
+            document.getElementById('publish-form').reset();
+            loadListings();
+            checkSubscriptionStatus();
+        } catch (error) {
+            console.error('Erreur lors de la publication:', error);
+            alert('Erreur lors de la publication de l\'annonce');
+        }
+    }
+
+    // Check subscription status
+    async function checkSubscriptionStatus() {
+        if (!currentUser) return;
+        
+        try {
+            const listingsQuery = query(collection(db, 'listings'), where('userId', '==', currentUser.uid));
+            const listingsSnapshot = await getDocs(listingsQuery);
+            const listingCount = listingsSnapshot.size;
+
+            const subSection = document.getElementById('subscription-section');
+            const freeBadge = document.getElementById('free-announcement-badge');
+
+            if (listingCount === 0) {
+                subSection.classList.add('hidden');
+                freeBadge.classList.remove('hidden');
+            } else {
+                subSection.classList.remove('hidden');
+                freeBadge.classList.add('hidden');
+            }
+        } catch (error) {
+            console.error('Erreur lors de la vérification de l\'abonnement:', error);
+        }
+    }
+
+    // Pay with Wave
+    async function payWave() {
+        const val = document.getElementById('pack-select').value;
+        const packSelect = document.getElementById('pack-select');
+        const selectedOption = packSelect.options[packSelect.selectedIndex];
+        const packLabel = selectedOption.text;
+        
+        if (val === '0') {
+            alert('Veuillez sélectionner un pack d\'abonnement.');
+            return;
+        }
+
+        try {
+            await addDoc(collection(db, 'payments'), {
+                userId: currentUser.uid,
+                userEmail: currentUser.email,
+                amount: parseInt(val),
+                packType: val,
+                packLabel: packLabel,
+                status: 'pending',
+                paymentMethod: 'wave',
+                waveNumber: WAVE_NUM,
+                createdAt: new Date(),
+                updatedAt: new Date()
+            });
+
+            const message = `Montant à payer : ${val}F\nPack : ${packLabel}\n\nNuméro Wave : ${WAVE_NUM}\n\nVous allez être redirigé vers Wave. Complétez le paiement pour activer votre abonnement.`;
+            
+            if (confirm(message + '\n\nContinuer ?')) {
+                window.open(`https://wave.com/pay?phone=${WAVE_NUM}&amount=${val}`, '_blank');
+            }
+        } catch (error) {
+            console.error('Erreur lors du paiement:', error);
+        }
+    }
+
+    // Tab switching with proper indicator update
+    function switchTab(event, tabName) {
+        event.preventDefault();
+        
+        const tabs = document.querySelectorAll('.view-section');
+        tabs.forEach(tab => tab.classList.add('hidden'));
+        document.getElementById('view-' + tabName).classList.remove('hidden');
+        
+        const items = document.querySelectorAll('.tab-item');
+        items.forEach(item => item.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+        
+        updateIndicator();
+
+        if (tabName === 'profile') {
+            loadProfileData();
+        } else if (tabName === 'messages') {
+            loadConversations();
+        }
+    }
+
+    // Update tab indicator position
+    function updateIndicator() {
+        const items = document.querySelectorAll('.tab-item');
+        const indicator = document.querySelector('.tab-indicator');
+        if (items.length === 0 || !indicator) return;
+        
+        const activeItem = document.querySelector('.tab-item.active');
+        if (activeItem) {
+            const itemIndex = Array.from(items).indexOf(activeItem);
+            const itemWidth = 100 / items.length;
+            const position = itemIndex * itemWidth;
+            indicator.style.width = `calc(${itemWidth}% - 3px)`;
+            indicator.style.left = `calc(${position}% + 8px)`;
+        }
+    }
+
+    // Admin functions
+    async function loadAdminData() {
+        try {
+            loadPayments();
+            loadReportedListings();
+        } catch (error) {
+            console.error('Erreur lors du chargement des données admin:', error);
+        }
+    }
+
+    async function loadPayments() {
+        try {
+            const paymentsQuery = query(collection(db, 'payments'), where('status', '==', 'pending'));
+            const snapshot = await getDocs(paymentsQuery);
+            let html = '';
+            snapshot.forEach(doc => {
+                const payment = doc.data();
+                html += `
+                    <div class="payment-item">
+                        <div>
+                            <b>${payment.userEmail}</b> - ${payment.packLabel} (${payment.amount}F)
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn-small btn-green" onclick="validatePayment('${doc.id}')">Valider</button>
+                            <button class="btn-small btn-red" onclick="rejectPayment('${doc.id}')">Refuser</button>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('payments-list').innerHTML = html || '<p style="color:#8e8e93; text-align: center; padding: 20px;">Aucun paiement en attente</p>';
+        } catch (error) {
+            console.error('Erreur lors du chargement des paiements:', error);
+        }
+    }
+
+    async function validatePayment(paymentId) {
+        try {
+            await updateDoc(doc(db, 'payments', paymentId), { status: 'validated' });
+            alert('Paiement validé !');
+            loadPayments();
+            loadAdminData();
+        } catch (error) {
+            console.error('Erreur lors de la validation:', error);
+        }
+    }
+
+    async function rejectPayment(paymentId) {
+        if (confirm('Êtes-vous sûr de vouloir refuser ce paiement ?')) {
+            try {
+                await updateDoc(doc(db, 'payments', paymentId), { status: 'rejected' });
+                alert('Paiement refusé.');
+                loadPayments();
+                loadAdminData();
+            } catch (error) {
+                console.error('Erreur lors du refus:', error);
+            }
+        }
+    }
+
+    async function loadReportedListings() {
+        try {
+            const listingsQuery = query(collection(db, 'listings'), where('reportCount', '>', 0));
+            const snapshot = await getDocs(listingsQuery);
+            let html = '';
+            snapshot.forEach(doc => {
+                const listing = doc.data();
+                html += `
+                    <div class="listing-item">
+                        <div>
+                            <b>${listing.title}</b> (Signalée ${listing.reportCount}x) - <span>${listing.neighborhood}, ${listing.commune}</span>
+                        </div>
+                        <button class="btn-small btn-red" onclick="removeListing('${doc.id}')">Supprimer</button>
+                    </div>
+                `;
+            });
+            document.getElementById('reported-listings-list').innerHTML = html || '<p style="color:#8e8e93;">Aucune annonce signalée</p>';
+        } catch (error) {
+            console.error('Erreur lors du chargement des annonces signalées:', error);
+        }
+    }
+
+    async function removeListing(listingId) {
+        if (confirm('Êtes-vous sûr de vouloir supprimer cette annonce ?')) {
+            try {
+                await updateDoc(doc(db, 'listings', listingId), { deleted: true });
+                alert('Annonce supprimée.');
+                loadReportedListings();
+                loadAdminData();
+            } catch (error) {
+                console.error('Erreur lors de la suppression:', error);
+            }
+        }
+    }
+
+    async function loadProfileData() {
+        try {
+            document.getElementById('profile-email').innerText = currentUser.email;
+            document.getElementById('profile-role').innerText = currentUserProfile.role === 'LOCATAIRE' ? 'Locataire' : 'Propriétaire';
+
+            if (currentUserProfile.role === 'PROPRIETAIRE') {
+                document.getElementById('my-listings-section').classList.remove('hidden');
+                const listingsQuery = query(collection(db, 'listings'), where('userId', '==', currentUser.uid));
+                const snapshot = await getDocs(listingsQuery);
+                let html = '';
+                snapshot.forEach(doc => {
+                    const listing = doc.data();
+                    html += `
+                        <div class="listing-card" style="margin-top: 10px;">
+                            <div class="listing-image">
+                                ${listing.photos && listing.photos.length > 0 
+                                    ? `<img src="${listing.photos[0]}" alt="${listing.title}">` 
+                                    : '<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#ccc;">Pas d\'image</div>'}
+                            </div>
+                            <div class="listing-content">
+                                <div>
+                                    <div class="listing-title">${listing.title}</div>
+                                    <div class="listing-location">${listing.neighborhood}, ${listing.commune}</div>
+                                </div>
+                                <div>
+                                    <div class="listing-price">${listing.price.toLocaleString()} FCFA</div>
+                                    <div class="listing-actions">
+                                        <button class="btn-small btn-blue" style="flex:1;">Modifier</button>
+                                        <button class="btn-small btn-red" style="flex:1;" onclick="deleteMyListing('${doc.id}')">Supprimer</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                document.getElementById('my-listings-container').innerHTML = html || '<p style="color:#8e8e93;">Vous n\'avez pas encore d\'annonces</p>';
+            }
+        } catch (error) {
+            console.error('Erreur lors du chargement du profil:', error);
+        }
+    }
+
+    async function deleteMyListing(listingId) {
+        if (confirm('Êtes-vous sûr de vouloir supprimer cette annonce ?')) {
+            try {
+                await updateDoc(doc(db, 'listings', listingId), { deleted: true });
+                alert('Annonce supprimée.');
+                loadProfileData();
+                loadListings();
+            } catch (error) {
+                console.error('Erreur lors de la suppression:', error);
+            }
+        }
+    }
+
+    // Messaging functions
+    async function loadConversations() {
+        if (!currentUser) return;
+
+        try {
+            const conversationsRef = collection(db, 'conversations');
+            const q = query(conversationsRef, where('participants', 'array-contains', currentUser.uid));
+            
+            onSnapshot(q, async (snapshot) => {
+                const conversationsList = document.getElementById('conversations-list');
+                let html = '';
+
+                if (snapshot.empty) {
+                    conversationsList.innerHTML = '<div class="empty-state">Aucune conversation</div>';
+                    return;
+                }
+
+                for (const convDoc of snapshot.docs) {
+                    const conv = convDoc.data();
+                    const otherUserId = conv.participants.find(p => p !== currentUser.uid);
+                    const otherUserDoc = await getDoc(doc(db, 'users', otherUserId));
+                    const otherUserEmail = otherUserDoc.exists() ? otherUserDoc.data().email : 'Utilisateur';
+
+                    const lastMessage = conv.lastMessage || 'Aucun message';
+                    const isUnread = conv.unreadBy && conv.unreadBy.includes(currentUser.uid);
+
+                    html += `
+                        <div class="conversation-item ${isUnread ? 'unread' : ''}" onclick="openConversation('${convDoc.id}', '${otherUserId}', '${otherUserEmail}')">
+                            <div class="conversation-name">${otherUserEmail}</div>
+                            <div class="conversation-preview">${lastMessage}</div>
+                        </div>
+                    `;
+                }
+
+                conversationsList.innerHTML = html;
+            });
+        } catch (error) {
+            console.error('Erreur lors du chargement des conversations:', error);
+        }
+    }
+
+    async function openConversation(conversationId, otherUserId, otherUserEmail) {
+        currentChatWith = { id: conversationId, userId: otherUserId, email: otherUserEmail };
+        document.getElementById('conversations-list').parentElement.classList.add('hidden');
+        document.getElementById('chat-detail').classList.remove('hidden');
+        document.getElementById('chat-title').innerText = otherUserEmail;
+
+        // Mark as read
+        try {
+            const convRef = doc(db, 'conversations', conversationId);
+            const convDoc = await getDoc(convRef);
+            let unreadBy = convDoc.data().unreadBy || [];
+            unreadBy = unreadBy.filter(uid => uid !== currentUser.uid);
+            await updateDoc(convRef, { unreadBy });
+        } catch (error) {
+            console.error('Erreur lors du marquage comme lu:', error);
+        }
+
+        // Load messages
+        const messagesRef = collection(db, 'conversations', conversationId, 'messages');
+        const q = query(messagesRef, orderBy('timestamp', 'asc'));
+        
+        onSnapshot(q, (snapshot) => {
+            const messagesDisplay = document.getElementById('messages-display');
+            let html = '';
+
+            snapshot.forEach(msgDoc => {
+                const msg = msgDoc.data();
+                const isOwn = msg.senderId === currentUser.uid;
+                html += `
+                    <div class="message ${isOwn ? 'sent' : 'received'}">
+                        <div class="message-bubble">${msg.text}</div>
+                        <div class="message-time">${new Date(msg.timestamp?.toDate()).toLocaleTimeString()}</div>
+                    </div>
+                `;
+            });
+
+            messagesDisplay.innerHTML = html;
+            messagesDisplay.scrollTop = messagesDisplay.scrollHeight;
+        });
+    }
+
+    function backToConversations() {
+        currentChatWith = null;
+        document.getElementById('conversations-list').parentElement.classList.remove('hidden');
+        document.getElementById('chat-detail').classList.add('hidden');
+        document.getElementById('message-input').value = '';
+    }
+
+    async function sendMessage() {
+        if (!currentChatWith) return;
+
+        const messageText = document.getElementById('message-input').value.trim();
+        if (!messageText) return;
+
+        try {
+            const messagesRef = collection(db, 'conversations', currentChatWith.id, 'messages');
+            await addDoc(messagesRef, {
+                senderId: currentUser.uid,
+                text: messageText,
+                timestamp: serverTimestamp()
+            });
+
+            // Update conversation last message
+            await updateDoc(doc(db, 'conversations', currentChatWith.id), {
+                lastMessage: messageText,
+                lastMessageTime: serverTimestamp(),
+                unreadBy: [currentChatWith.userId]
+            });
+
+            document.getElementById('message-input').value = '';
+        } catch (error) {
+            console.error('Erreur lors de l\'envoi du message:', error);
+        }
+    }
+
+    function handleMessageKeyPress(event) {
+        if (event.key === 'Enter') {
+            sendMessage();
+        }
+    }
+
+    // Admin notifications for payments
+    function listenForAdminNotifications() {
+        try {
+            const paymentsRef = collection(db, 'payments');
+            const q = query(paymentsRef, where('status', '==', 'pending'));
+            
+            onSnapshot(q, (snapshot) => {
+                if (snapshot.size > 0 && 'Notification' in window && Notification.permission === 'granted') {
+                    new Notification('💰 Nouveau paiement en attente', {
+                        body: `${snapshot.size} paiement(s) en attente de validation`,
+                        icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect fill="%23ff3b30" width="192" height="192"/><text x="50%" y="50%" font-size="120" font-weight="bold" fill="white" text-anchor="middle" dominant-baseline="central">!</text></svg>',
+                        tag: 'payment-notification'
+                    });
+                }
+            });
+
+            // Request notification permission
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        } catch (error) {
+            console.error('Erreur lors de la configuration des notifications:', error);
+        }
+    }
+
+    function switchAdminTab(tab) {
+        const sections = document.querySelectorAll('.admin-section');
+        sections.forEach(s => s.classList.add('hidden'));
+        
+        const buttons = document.querySelectorAll('.admin-tab-btn');
+        buttons.forEach(b => b.classList.remove('active'));
+        
+        if (tab === 'payments') {
+            document.getElementById('admin-payments').classList.remove('hidden');
+            buttons[0].classList.add('active');
+        } else if (tab === 'reported') {
+            document.getElementById('admin-reported').classList.remove('hidden');
+            buttons[1].classList.add('active');
+        }
+    }
+
+    // Handle redirect result
+    getRedirectResult(auth).then((result) => {
+        if (result) {
+            console.log("Utilisateur connecté après redirection:", result.user.email);
+        }
+    }).catch((error) => {
+        console.error("Erreur lors de la redirection:", error);
+    });
+
+</script>
+
+</body>
+</html>
